@@ -7,7 +7,8 @@ Import::Function@ clickFun = null;
 Import::Function@ mousePosFun = null;
 Import::Function@ justClickFun = null;
 
-// todo exclude non native blocks! (magnets, edited blocks)
+// blacklist include terms, these cause crashes
+string[] blacklist = {"GateSpecialTurbo", "GateSpecialBoost"};
 
 int totalBlocks = 2360;
 int count = 0;
@@ -62,6 +63,17 @@ void ExploreNode(CGameCtnArticleNodeDirectory@ parentNode, string folder = "") {
                 }
                 if(string(block.Name).ToLower().Contains("water")) {
                     warn("Water can't be converted!");
+                    continue;
+                }
+                bool blacklisted = false;
+                for(uint i = 0; i < blacklist.Length; i++) {
+                    if(block.Name.Contains(blacklist[i])) {
+                        blacklisted = true;
+                        break;
+                    }
+                }
+                if(blacklisted) {
+                    warn(block.Name + " not converting, is blacklisted");
                     continue;
                 }
                 print("Converting block: " + block.Name + " " + count + " / " + totalBlocks);
